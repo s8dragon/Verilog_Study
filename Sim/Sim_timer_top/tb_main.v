@@ -84,6 +84,10 @@ module tb_main;
 		APB_BFM_MASTER.apb_wr(32'h44a00004, 32'd16384);		// TOT_CNT
 		APB_BFM_MASTER.apb_wr(32'h44a00008, 32'd7000);		// DUTY_CNT
 		APB_BFM_MASTER.apb_wr(32'h44a00000, 32'h2);			// MODE: 0, GO_EN: 1
+		
+		#(`CLK_PERIOD*10);
+		APB_BFM_MASTER.apb_wr(32'h44a0000c, 32'hffffffff);	// address error check
+		APB_BFM_MASTER.apb_wr(32'h44a00010, 32'hffffffff);	// address error check
 
 		#(`CLK_PERIOD*10);
 		APB_BFM_MASTER.apb_rd(32'h44a00000, apb_rd_data);
