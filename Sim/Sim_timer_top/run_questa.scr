@@ -1,0 +1,7 @@
+# Questa script
+
+#log	-r	-depth	0	/tb_main/*
+
+#run	100 ms
+#
+#exit
