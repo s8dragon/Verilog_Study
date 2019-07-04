@@ -7,8 +7,10 @@
 **/Sim/*/.simvision
 **/Sim/*/_In/
 **/Sim/*/_Out/
-**/Sim/*/log/
-**/Sim/*/wave/
+**/Sim/*/log/*
+!**/Sim/*/log/.gitkeep
+**/Sim/*/wave/*
+!**/Sim/*/wave/.gitkeep
 **/Sim/*/work/
 **/Sim/*/transcript
 **/Sim/*/wlft*

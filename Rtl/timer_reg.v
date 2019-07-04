@@ -47,7 +47,7 @@ module	timer_reg  #(
 	wire		apb_access = PSEL & PENABLE & PREADY;
 
 	// address check
-	wire		slv_err_flg = (PADDR[ADR_W-1:20]!=BASE_ADR) | (pword_addr>18'd3);
+	wire		slv_err_flg = (PADDR[ADR_W-1:20]!=BASE_ADR) | (|pword_addr[17:2]);
 	reg			slv_err;
 	always @(posedge PCLK or negedge PRESETn) begin
 		if(!PRESETn)		slv_err <= 1'd0;
@@ -85,7 +85,7 @@ module	timer_reg  #(
 			end
 			else begin
 				case(pword_addr[1:0])
-				2'd0  : rd_data <= cs_reg;
+				2'd0  : rd_data <= {29'd0,cs_reg};
 				2'd1  : rd_data <= tot_cnt_reg;
 				2'd2  : rd_data <= duty_cnt_reg;
 				2'd3  : rd_data <= 32'd0;

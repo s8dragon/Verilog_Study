@@ -12,19 +12,19 @@ module	timer_top  #(
 	)
 	(
 		// APB domain
-		input				PCLK,
-		input				PRESETn,
-		input	[31:0]		PADDR,
-		input				PSEL,
-		input				PENABLE,
-		input				PWRITE,
-		input	[31:0]		PWDATA,
-		output				PREADY,
-		output	[31:0]		PRDATA,
-		output				PSLVERR,
+		input					PCLK,
+		input					PRESETn,
+		input	[ADR_W-1:0]		PADDR,
+		input					PSEL,
+		input					PENABLE,
+		input					PWRITE,
+		input	[DAT_W-1:0]		PWDATA,
+		output					PREADY,
+		output	[DAT_W-1:0]		PRDATA,
+		output					PSLVERR,
 		
-		output				IRQ,
-		output				PWM
+		output					IRQ,
+		output					PWM
 	);
 	
 	wire			timer_mode;
