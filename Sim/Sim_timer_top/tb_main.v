@@ -33,6 +33,8 @@ module tb_main;
 	wire			apb_ready;
 	wire	[31:0]	apb_rdata;
 	wire			apb_slverr;
+	
+	wire			timer_irq;
 
 	apb_bfm_master APB_BFM_MASTER(
 		.PCLK		(CLK			),
@@ -65,7 +67,7 @@ module tb_main;
 		.PRDATA		(apb_rdata		),
 		.PSLVERR	(apb_slverr		),
 		
-		.IRQ		(				),
+		.IRQ		(timer_irq		),
 		.PWM		(				)
 	);
 
@@ -78,11 +80,10 @@ module tb_main;
 	initial begin
 		wait(RSTN);
 	
+		// Counter mode test
 		#(`CLK_PERIOD*10);
-	
 		APB_BFM_MASTER.apb_wr(32'h44a00000, 32'h0);			// MODE: 0, GO_EN: 0
-		APB_BFM_MASTER.apb_wr(32'h44a00004, 32'd16384);		// TOT_CNT
-		APB_BFM_MASTER.apb_wr(32'h44a00008, 32'd7000);		// DUTY_CNT
+		APB_BFM_MASTER.apb_wr(32'h44a00004, 32'd128);		// TOT_CNT
 		APB_BFM_MASTER.apb_wr(32'h44a00000, 32'h2);			// MODE: 0, GO_EN: 1
 		
 		#(`CLK_PERIOD*10);
@@ -90,14 +91,24 @@ module tb_main;
 		APB_BFM_MASTER.apb_wr(32'h44a00010, 32'hffffffff);	// address error check
 
 		#(`CLK_PERIOD*10);
-		APB_BFM_MASTER.apb_rd(32'h44a00000, apb_rd_data);
+		APB_BFM_MASTER.apb_rd(32'h44a00000, apb_rd_data);	// write verify
 		APB_BFM_MASTER.apb_rd(32'h44a00004, apb_rd_data);
 		APB_BFM_MASTER.apb_rd(32'h44a00008, apb_rd_data);
 
-		#(`CLK_PERIOD*30);
-		force tb_main.TIMER_TOP.TIMER.IRQ_TRG = 1'd1;
-		#(`CLK_PERIOD*2);
-		release tb_main.TIMER_TOP.TIMER.IRQ_TRG;
+		// Counter IRQ clear		
+		wait(timer_irq);
+		APB_BFM_MASTER.apb_wr(32'h44a00000, 32'h0);			// MODE: 0, GO_EN: 0
+		
+		// PWM mode test
+		#(`CLK_PERIOD*50);
+		APB_BFM_MASTER.apb_wr(32'h44a00000, 32'h1);			// MODE: 1, GO_EN: 0
+		APB_BFM_MASTER.apb_wr(32'h44a00004, 32'd64);		// TOT_CNT
+		APB_BFM_MASTER.apb_wr(32'h44a00008, 32'd25);		// DUTY_CNT
+		APB_BFM_MASTER.apb_wr(32'h44a00000, 32'h3);			// MODE: 1, GO_EN: 1
+		
+		#(`CLK_PERIOD*600);
+		APB_BFM_MASTER.apb_wr(32'h44a00000, 32'h1);			// MODE: 1, GO_EN: 0
+		
 	end
 	
 
